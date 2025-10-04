@@ -413,7 +413,18 @@ function showFinalMessage() {
 
 // Handle final CTA button click
 function handleFinalCta() {
-    // Redireciona para a página de vendas separada
+    // Navega para a seção de vendas interna no fluxo do quiz
+    const slides = Array.from(document.querySelectorAll('.quiz-slide'));
+    const salesSlide = document.querySelector('.quiz-slide.sales-page');
+    if (salesSlide) {
+        const targetIndex = slides.indexOf(salesSlide);
+        if (targetIndex !== -1) {
+            currentSlide = targetIndex;
+            showSlide(currentSlide);
+            return;
+        }
+    }
+    // Fallback: caso a seção interna não exista, redireciona para sales.html
     window.location.href = 'sales.html';
 }
 
