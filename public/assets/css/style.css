@@ -270,7 +270,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
     margin-bottom: 6px;
 }
 
@@ -373,6 +373,7 @@ body {
     .swipe-indicator { bottom: 0; }
     .slide-scroll-content { max-height: calc(100vh - 220px); padding: 0 4px 10px; }
 
+    .chevrons-container { gap: 12px; }
     .chevron { font-size: 22px; }
     
     .swipe-text {

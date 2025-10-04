@@ -226,16 +226,17 @@ function setupSwipeAndScrollNavigation() {
         
         // Detect upward scroll (negative deltaY)
         if (e.deltaY < -50) {
-            e.preventDefault(); // Prevent default scroll behavior
-            isScrolling = true;
+            // Só impede o scroll e navega quando o swipe está habilitado
             if (swipeEnabled) {
+                e.preventDefault(); // Prevent default scroll behavior apenas quando for navegar
+                isScrolling = true;
                 navigateToNextSlide();
+                
+                // Prevent rapid scrolling with smoother timing
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 600); // Reduced from 800ms to 600ms for smoother experience
             }
-            
-            // Prevent rapid scrolling with smoother timing
-            setTimeout(() => {
-                isScrolling = false;
-            }, 600); // Reduced from 800ms to 600ms for smoother experience
         }
     }, { passive: false }); // Changed to passive: false to allow preventDefault
     
@@ -254,6 +255,15 @@ function setupSwipeAndScrollNavigation() {
     function navigateToNextSlide() {
         // Allow navigation from welcome screen (slide 0) to story screen (slide 1)
         if (currentSlide === 0 || currentSlide === 1) {
+            // Antes de trocar, aplica gate imediato baseado no alvo
+            const slidesAll = document.querySelectorAll('.quiz-slide');
+            const targetIndex = currentSlide + 1;
+            const targetEl = slidesAll[targetIndex];
+            if (targetEl) {
+                // Se o alvo tem no-swipe, desabilita imediatamente para evitar avanço acidental
+                swipeEnabled = !targetEl.hasAttribute('data-no-swipe');
+            }
+
             currentSlide++;
             // Add smooth transition effect
             const currentSlideElement = document.querySelector('.quiz-slide[style*="display: flex"]');
