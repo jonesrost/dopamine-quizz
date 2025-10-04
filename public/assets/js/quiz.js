@@ -413,19 +413,8 @@ function showFinalMessage() {
 
 // Handle final CTA button click
 function handleFinalCta() {
-    // Navega para a página de vendas (slide com classe .sales-slide)
-    const slides = Array.from(document.querySelectorAll('.quiz-slide'));
-    const salesSlide = document.querySelector('.sales-slide');
-    if (salesSlide) {
-        const targetIndex = slides.indexOf(salesSlide);
-        if (targetIndex !== -1) {
-            currentSlide = targetIndex;
-            showSlide(currentSlide);
-            return;
-        }
-    }
-    // Fallback caso não encontre o slide de vendas
-    alert('Sales page not found. Please check the HTML structure.');
+    // Redireciona para a página de vendas separada
+    window.location.href = 'sales.html';
 }
 
 // Update progress bar
