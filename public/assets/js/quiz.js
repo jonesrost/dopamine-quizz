@@ -132,6 +132,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Start new quiz
         startNewQuiz();
     }
+
+    // Setup custom leave/refresh protection
+    setupLeaveProtection();
 });
 
 // Start a new quiz
@@ -203,6 +206,78 @@ function setupEventListeners() {
             startNewQuiz();
         }
     });
+}
+
+// Setup leave/refresh protection to show custom modal
+function setupLeaveProtection() {
+    const leaveModal = document.getElementById('leave-modal');
+    const btnContinue = document.getElementById('leave-continue');
+    const btnRestart = document.getElementById('leave-restart');
+    const btnCancel = document.getElementById('leave-cancel');
+
+    function showLeaveModal() {
+        if (leaveModal) {
+            leaveModal.classList.remove('hidden');
+        }
+    }
+
+    function hideLeaveModal() {
+        if (leaveModal) {
+            leaveModal.classList.add('hidden');
+        }
+    }
+
+    // Keyboard refresh: F5 or Cmd/Ctrl+R
+    document.addEventListener('keydown', function(e) {
+        const isRefreshCombo = (e.key === 'F5') || ((e.key === 'r' || e.key === 'R') && (e.metaKey || e.ctrlKey));
+        if (isRefreshCombo) {
+            e.preventDefault();
+            showLeaveModal();
+        }
+    });
+
+    // Intercept clicks on external links
+    document.addEventListener('click', function(e) {
+        const anchor = e.target.closest('a');
+        if (anchor && anchor.href && !anchor.href.includes('index.html') && !anchor.href.startsWith('#')) {
+            e.preventDefault();
+            showLeaveModal();
+        }
+    });
+
+    // Beforeunload as a fallback: show modal and native prompt (cannot fully disable native)
+    window.addEventListener('beforeunload', function(e) {
+        showLeaveModal();
+        e.preventDefault();
+        e.returnValue = '';
+    });
+
+    // Wire modal actions
+    if (btnContinue) {
+        btnContinue.addEventListener('click', function() {
+            const saved = quizStorage.loadProgress();
+            if (saved) {
+                restoreQuizState(saved);
+            } else {
+                startNewQuiz();
+            }
+            hideLeaveModal();
+        });
+    }
+
+    if (btnRestart) {
+        btnRestart.addEventListener('click', function() {
+            quizStorage.clearProgress();
+            startNewQuiz();
+            hideLeaveModal();
+        });
+    }
+
+    if (btnCancel) {
+        btnCancel.addEventListener('click', function() {
+            hideLeaveModal();
+        });
+    }
 }
 
 function setupSwipeAndScrollNavigation() {

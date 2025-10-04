@@ -382,3 +382,38 @@ body {
         font-size: 10px;
     }
 }
+
+/* Leave/Refresh custom modal */
+.leave-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+.leave-modal-overlay.hidden { display: none; }
+.leave-modal {
+    width: 90%;
+    max-width: 520px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    padding: 22px;
+    text-align: center;
+}
+.leave-title {
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+.leave-subtitle {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 16px;
+}
+.leave-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
