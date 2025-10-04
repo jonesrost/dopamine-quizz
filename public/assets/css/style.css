@@ -417,3 +417,32 @@ body {
     gap: 10px;
     justify-content: center;
 }
+
+/* Smooth progress bar animation */
+.progress-fill {
+  transition: width 350ms ease;
+}
+
+/* Smooth slide fade-in (additional to JS inline styles) */
+.quiz-slide {
+  transition: opacity 300ms ease;
+}
+
+/* Active button states on click */
+.option-button,
+.start-button,
+.cta-button,
+.restart-button,
+.continue-button {
+  transition: transform 120ms ease, box-shadow 200ms ease, filter 200ms ease;
+}
+
+.option-button.active,
+.start-button.active,
+.cta-button.active,
+.restart-button.active,
+.continue-button.active {
+  transform: scale(0.98);
+  filter: brightness(0.95);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.2);
+}

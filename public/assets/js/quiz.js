@@ -205,6 +205,30 @@ function setupEventListeners() {
             quizStorage.clearProgress();
             startNewQuiz();
         }
+
+        // Efeitos visuais e sonoros em cliques de botões
+        const clickable = e.target.closest('button');
+        if (clickable && (clickable.classList.contains('option-button') || clickable.classList.contains('cta-button') || clickable.classList.contains('continue-button') || clickable.classList.contains('start-button') || clickable.classList.contains('restart-button'))) {
+            spawnSparklesAt(e.clientX || (window.innerWidth/2), e.clientY || (window.innerHeight/2));
+            playClickSound();
+        }
+    });
+
+    // Estado ativo nos botões durante o clique
+    document.addEventListener('mousedown', function(e) {
+        const btn = e.target.closest('button');
+        if (btn && (btn.classList.contains('option-button') || btn.classList.contains('cta-button') || btn.classList.contains('continue-button') || btn.classList.contains('start-button') || btn.classList.contains('restart-button'))) {
+            btn.classList.add('active');
+        }
+    });
+
+    ['mouseup', 'mouseleave', 'blur'].forEach(evt => {
+        document.addEventListener(evt, function(e) {
+            const btn = e.target.closest('button');
+            if (btn && (btn.classList.contains('option-button') || btn.classList.contains('cta-button') || btn.classList.contains('continue-button') || btn.classList.contains('start-button') || btn.classList.contains('restart-button'))) {
+                btn.classList.remove('active');
+            }
+        }, true);
     });
 }
 
@@ -216,6 +240,8 @@ function setupLeaveProtection() {
     const btnCancel = document.getElementById('leave-cancel');
 
     function showLeaveModal() {
+        // Não mostrar nos dois primeiros passos
+        if (currentSlide < 2) return;
         if (leaveModal) {
             leaveModal.classList.remove('hidden');
         }
@@ -240,17 +266,14 @@ function setupLeaveProtection() {
     document.addEventListener('click', function(e) {
         const anchor = e.target.closest('a');
         if (anchor && anchor.href && !anchor.href.includes('index.html') && !anchor.href.startsWith('#')) {
-            e.preventDefault();
-            showLeaveModal();
+            if (currentSlide >= 2) {
+                e.preventDefault();
+                showLeaveModal();
+            }
         }
     });
 
-    // Beforeunload as a fallback: show modal and native prompt (cannot fully disable native)
-    window.addEventListener('beforeunload', function(e) {
-        showLeaveModal();
-        e.preventDefault();
-        e.returnValue = '';
-    });
+    // Removido o beforeunload para evitar o prompt nativo do navegador
 
     // Wire modal actions
     if (btnContinue) {
@@ -396,19 +419,22 @@ function showSlide(slideIndex) {
         if (progressBar) {
             const isQuestionSlide = slideElement.hasAttribute('data-question-id');
             if (!isQuestionSlide) {
-                // Hide on non-question slides (welcome, congratulations, sales page, etc.)
+                // Esconde em slides não-pergunta (boas-vindas, parabéns, vendas, etc.)
                 progressBar.style.display = 'none';
             } else {
-                // Show progress bar on question slides
+                // Mostra e calcula pelo número de respostas registradas
                 progressBar.style.display = 'block';
-                const slidesArr = Array.from(document.querySelectorAll('.quiz-slide'));
-                const firstQuestionIndex = slidesArr.findIndex(s => s.hasAttribute('data-question-id'));
                 const totalQuestions = document.querySelectorAll('.quiz-slide[data-question-id]').length;
-                const answeredCount = Math.max(0, slideIndex - firstQuestionIndex);
+                const answeredCount = (quizAnalytics.userResponses && quizAnalytics.userResponses.length) ? quizAnalytics.userResponses.length : 0;
                 const progress = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
                 updateProgressBar(progress);
             }
         }
+
+        // Fade-in suave ao exibir slide
+        slideElement.style.opacity = '0';
+        slideElement.style.transition = 'opacity 300ms ease';
+        setTimeout(() => { slideElement.style.opacity = '1'; }, 30);
 
         // Gating: require reading content on intro/story slides if marked
         setupScrollGateForSlide(slideElement, slideIndex);
@@ -435,7 +461,24 @@ function handleOptionClick(optionButton) {
     
     // Track response for analytics
     quizAnalytics.trackResponse(questionId, questionText, selectedOption, timeSpent);
-    
+
+    // Atualiza visualmente a barra de progresso conforme respostas
+    const totalQuestions = document.querySelectorAll('.quiz-slide[data-question-id]').length;
+    const answeredCount = (quizAnalytics.userResponses && quizAnalytics.userResponses.length) ? quizAnalytics.userResponses.length : 0;
+    const progressNow = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+    updateProgressBar(progressNow);
+
+    // Se respondeu a última pergunta, anima até 100% antes de parabéns
+    const isLastQuestionAnswered = answeredCount >= totalQuestions && totalQuestions > 0;
+    if (isLastQuestionAnswered) {
+        // Completa a barra e só então mostra parabéns
+        updateProgressBar(100);
+        setTimeout(() => {
+            showFinalMessage();
+        }, 800);
+        return;
+    }
+
     // Move to next slide after a short delay
     setTimeout(() => {
         currentSlide++;
@@ -444,7 +487,7 @@ function handleOptionClick(optionButton) {
         } else {
             showFinalMessage();
         }
-    }, 800);
+    }, 600);
 }
 
 // Show reward animation
@@ -471,6 +514,39 @@ function showConfetti() {
             spread: 70,
             origin: { y: 0.6 }
         });
+    }
+}
+
+// Sparkles (confetti leve) na posição do clique
+function spawnSparklesAt(x, y) {
+    if (typeof confetti !== 'undefined') {
+        confetti({
+            particleCount: 20,
+            spread: 30,
+            startVelocity: 30,
+            origin: { x: x / window.innerWidth, y: y / window.innerHeight }
+        });
+    }
+}
+
+// Som satisfatório de clique (beep curto)
+function playClickSound() {
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.value = 600;
+        gain.gain.setValueAtTime(0.02, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.2);
+    } catch (e) {
+        // Se o contexto não puder iniciar, silenciosamente ignora
+        console.warn('Audio click not available:', e);
     }
 }
 
