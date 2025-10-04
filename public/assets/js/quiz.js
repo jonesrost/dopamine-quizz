@@ -79,8 +79,7 @@ const quizAnalytics = {
         this.userResponses.push(response);
         console.log('Response recorded:', response);
         
-        // Save progress after each response
-        quizStorage.saveProgress(currentSlide, this.userResponses);
+        // Sem salvar progresso em localStorage (desativado)
         
         // Here you can send the data to an analytics server
         // this.sendToAnalyticsServer(response);
@@ -118,20 +117,8 @@ document.addEventListener('DOMContentLoaded', function() {
         quizConfig.totalSlides = allSlides.length;
     }
     
-    // Check for saved progress
-    if (quizStorage.hasSavedProgress()) {
-        const savedProgress = quizStorage.loadProgress();
-        if (savedProgress && confirm("You have a quiz in progress. Would you like to continue where you left off?")) {
-            // Restore quiz state
-            restoreQuizState(savedProgress);
-        } else {
-            // Start new quiz
-            startNewQuiz();
-        }
-    } else {
-        // Start new quiz
-        startNewQuiz();
-    }
+    // Início sempre limpo: sem memória de sessão e sem prompts
+    startNewQuiz();
 
     // Setup custom leave/refresh protection
     setupLeaveProtection();
@@ -235,7 +222,6 @@ function setupEventListeners() {
 // Setup leave/refresh protection to show custom modal
 function setupLeaveProtection() {
     const leaveModal = document.getElementById('leave-modal');
-    const btnContinue = document.getElementById('leave-continue');
     const btnRestart = document.getElementById('leave-restart');
     const btnCancel = document.getElementById('leave-cancel');
 
@@ -276,17 +262,7 @@ function setupLeaveProtection() {
     // Removido o beforeunload para evitar o prompt nativo do navegador
 
     // Wire modal actions
-    if (btnContinue) {
-        btnContinue.addEventListener('click', function() {
-            const saved = quizStorage.loadProgress();
-            if (saved) {
-                restoreQuizState(saved);
-            } else {
-                startNewQuiz();
-            }
-            hideLeaveModal();
-        });
-    }
+    // Botão "Continuar" removido (sem memória de sessão)
 
     if (btnRestart) {
         btnRestart.addEventListener('click', function() {
