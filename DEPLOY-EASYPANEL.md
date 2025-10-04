@@ -58,10 +58,32 @@ Após o deploy, teste:
 
 Para atualizar o site:
 1. Faça as alterações nos arquivos locais
-2. Crie um novo ZIP da pasta `public/`
-3. No EasyPanel, vá em **"Deployments"**
-4. Faça upload do novo arquivo
-5. Clique em **"Redeploy"**
+2. (Opção A) Crie um novo ZIP da pasta `public/` e faça upload manual (fluxo atual)
+3. (Opção B - Recomendado) Conecte o EasyPanel ao repositório Git para deploy automático:
+   - No EasyPanel, edite o projeto e mude **Source** para **Git**
+   - Conecte sua conta GitHub e selecione `jonesrost/dopamine-quizz`
+   - Branch: `main`
+   - Output Directory: `public`
+   - Build Command: vazio
+   - Ative **Auto Deploy on Push**
+   - Agora, cada `git push` dispara um deploy automático
+
+### Alternativa: Deploy automático via GitHub Pages
+O repositório inclui um workflow em `.github/workflows/deploy-pages.yml` que publica a pasta `public` no GitHub Pages a cada push para `main`.
+
+Como ativar:
+1. Vá em Settings → Pages
+2. Configure **Source** para **GitHub Actions**
+3. Faça um `git push` e aguarde a publicação
+
+### Script de push rápido (opcional)
+Adicionei um script para agilizar commits e push:
+
+```bash
+./scripts/quick-push.sh "Mensagem do commit"
+```
+
+Ele executa `git add -A`, `git commit -m "..."` e `git push` em sequência.
 
 ## 📱 Domínio Personalizado (Opcional)
 

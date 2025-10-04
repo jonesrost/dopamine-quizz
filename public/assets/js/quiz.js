@@ -12,6 +12,7 @@ const quizConfig = {
 // Track current slide
 let currentSlide = 0;
 let slideStartTime = 0;
+let swipeEnabled = true; // Gate for swipe navigation on intro/story slides
 
 // Local Storage Manager for saving quiz progress
 const quizStorage = {
@@ -214,7 +215,9 @@ function setupSwipeAndScrollNavigation() {
         if (e.deltaY < -50) {
             e.preventDefault(); // Prevent default scroll behavior
             isScrolling = true;
-            navigateToNextSlide();
+            if (swipeEnabled) {
+                navigateToNextSlide();
+            }
             
             // Prevent rapid scrolling with smoother timing
             setTimeout(() => {
@@ -229,7 +232,9 @@ function setupSwipeAndScrollNavigation() {
         
         // Detect upward swipe (positive distance)
         if (swipeDistance > swipeThreshold) {
-            navigateToNextSlide();
+            if (swipeEnabled) {
+                navigateToNextSlide();
+            }
         }
     }
     
@@ -286,6 +291,7 @@ function showSlide(slideIndex) {
     const slides = document.querySelectorAll('.quiz-slide');
     if (slideIndex >= 0 && slideIndex < slides.length) {
         slides[slideIndex].style.display = 'flex';
+        const slideElement = slides[slideIndex];
         
         // Show/hide progress bar based on slide index
         const progressBar = document.querySelector('.quiz-progress-bar');
@@ -301,6 +307,9 @@ function showSlide(slideIndex) {
                 updateProgressBar(Math.max(0, adjustedProgress));
             }
         }
+
+        // Gating: require reading content on intro/story slides if marked
+        setupScrollGateForSlide(slideElement, slideIndex);
     }
 }
 
@@ -387,4 +396,52 @@ function updateProgressBar(progress = 0) {
     if (progressFill) {
         progressFill.style.width = `${progress}%`;
     }
+}
+
+// Setup scroll gate for slides that require reading before swiping
+function setupScrollGateForSlide(slideElement, slideIndex) {
+    const requiresRead = slideElement && slideElement.dataset && slideElement.dataset.requiresRead === 'true';
+    const indicator = slideElement.querySelector('.swipe-indicator');
+    const contentEl = slideElement.querySelector('.slide-scroll-content');
+    
+    // Default: enable swipe except for intro/story slides with requiresRead
+    if (requiresRead && (slideIndex === 0 || slideIndex === 1)) {
+        // If content is scrollable, disable swipe until bottom reached
+        const isScrollable = contentEl && contentEl.scrollHeight > contentEl.clientHeight + 2;
+        if (isScrollable) {
+            setSwipeEnabled(false, indicator, contentEl);
+            // Attach listener to enable swipe when scrolled to bottom
+            const onScroll = () => {
+                if (isScrolledToBottom(contentEl)) {
+                    setSwipeEnabled(true, indicator, contentEl);
+                }
+            };
+            contentEl.addEventListener('scroll', onScroll, { passive: true });
+        } else {
+            // Not scrollable: allow immediate swipe
+            setSwipeEnabled(true, indicator, contentEl);
+        }
+    } else {
+        setSwipeEnabled(true, indicator, contentEl);
+    }
+}
+
+function setSwipeEnabled(enabled, indicator, contentEl) {
+    swipeEnabled = enabled;
+    if (indicator) {
+        indicator.classList.toggle('enabled', enabled);
+        indicator.classList.toggle('disabled', !enabled);
+        indicator.classList.toggle('hidden', !enabled);
+        const textEl = indicator.querySelector('.swipe-text');
+        if (textEl) {
+            textEl.textContent = enabled ? 'deslize para continuar' : 'role para ler e depois deslize';
+        }
+    }
+
+    // Não reservar espaço no conteúdo: indicador fica sobreposto sem criar faixa
+}
+
+function isScrolledToBottom(el) {
+    if (!el) return true;
+    return (el.scrollTop + el.clientHeight) >= (el.scrollHeight - 6);
 }

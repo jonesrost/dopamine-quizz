@@ -82,7 +82,17 @@ body {
     text-align: center;
     width: 100%;
     max-width: 600px;
-    padding-bottom: 80px; /* Space for swipe indicator */
+    padding-bottom: 0; /* Sem espaço reservado; remove qualquer faixa branca */
+    position: relative;
+}
+
+/* Scrollable content for intro/story slides */
+.slide-scroll-content {
+    width: 100%;
+    max-height: calc(100vh - 240px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 6px 12px;
 }
 
 .slide-title {
@@ -237,29 +247,33 @@ body {
 
 .swipe-indicator {
     position: fixed;
-    bottom: 0px;
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
     z-index: 1000;
-    padding: 10px;
+    padding: 10px 12px;
 }
+
+.swipe-indicator.disabled { opacity: 0.5; filter: grayscale(40%); }
+.swipe-indicator.enabled { opacity: 1; }
+.swipe-indicator.hidden { display: none; }
 
 .chevrons-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: -2px;
-    margin-bottom: 5px;
+    gap: 4px;
+    margin-bottom: 6px;
 }
 
 .chevron {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: normal;
     animation: fadeGlow 2s infinite;
     color: #007bff;
-    line-height: 0.8;
+    line-height: 1;
 }
 
 .chevron-1 {
@@ -344,13 +358,10 @@ body {
         font-size: 16px;
     }
     
-    .swipe-indicator {
-        bottom: 20px;
-    }
-    
-    .chevron {
-        font-size: 20px;
-    }
+    .swipe-indicator { bottom: 0; }
+    .slide-scroll-content { max-height: calc(100vh - 220px); }
+
+    .chevron { font-size: 22px; }
     
     .swipe-text {
         font-size: 10px;
