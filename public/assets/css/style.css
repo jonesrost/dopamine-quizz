@@ -280,6 +280,8 @@ body {
     animation: fadeGlow 2s infinite;
     color: #007bff;
     line-height: 1;
+    display: inline-block;
+    transform-origin: center;
 }
 
 .chevron-1 {
@@ -374,7 +376,7 @@ body {
     .slide-scroll-content { max-height: calc(100vh - 220px); padding: 0 4px 10px; }
 
     .chevrons-container { gap: 12px; }
-    .chevron { font-size: 22px; }
+    .chevron { font-size: 24px; transform: scaleX(1.35); }
     
     .swipe-text {
         font-size: 10px;
