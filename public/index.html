@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dopamine Quiz - Transforme sua vida</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <div class="quiz-progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+        
+        <div class="quiz-slides-container">
+            <!-- Welcome Screen (Slide 0) -->
+            <div class="quiz-slide welcome-screen">
+                <h1 class="slide-title">🎉 PARABÉNS!</h1>
+                <p class="slide-description">Você deu o primeiro passo para transformar sua vida!</p>
+                <p class="slide-description">Agora vamos descobrir qual é o seu perfil e como podemos ajudar você a alcançar seus objetivos.</p>
+                <div class="swipe-indicator">
+                    <div class="chevrons-container">
+                        <div class="chevron chevron-1">⌃</div>
+                        <div class="chevron chevron-2">⌃</div>
+                        <div class="chevron chevron-3">⌃</div>
+                    </div>
+                    <p class="swipe-text">swipe up to next</p>
+                </div>
+            </div>
+
+            <!-- Story Screen (Slide 1) -->
+            <div class="quiz-slide story-screen">
+                <h1 class="slide-title">Parabéns. Seu resultado está pronto...</h1>
+                <p class="slide-description">Mas antes de te mostrar por que você está travada(o), preciso te contar uma coisa que ninguém gosta de admitir.</p>
+                <div class="image-placeholder">
+                    <span class="placeholder-icon">👗</span>
+                    <p class="placeholder-text">Imagem: Pessoa tentando vestir roupa antiga</p>
+                </div>
+                <p class="slide-description">Eu achava que estava indo bem. Seguia minha rotina, comia direitinho, fazia meus treinos... Até que um dia, pra um jantar de família, resolvi experimentar um vestido antigo. Ele sempre me caía bem. Mas, naquele dia… não passou da cintura.</p>
+                <p class="slide-description">"É só voltar pra dieta e fazer mais cardio. Vai passar." Mas não passou.</p>
+                <div class="swipe-indicator">
+                    <div class="chevrons-container">
+                        <div class="chevron chevron-1">⌃</div>
+                        <div class="chevron chevron-2">⌃</div>
+                        <div class="chevron chevron-3">⌃</div>
+                    </div>
+                    <p class="swipe-text">swipe up to next</p>
+                </div>
+            </div>
+
+            <!-- Question 1 (Slide 2) -->
+            <div class="quiz-slide question-slide" data-question-id="1">
+                <h2 class="slide-question">Você também já passou por isso?</h2>
+                <div class="options-container">
+                    <button class="option-button" data-option-index="0">Passei por isso recentemente.</button>
+                    <button class="option-button" data-option-index="1">Muito!</button>
+                    <button class="option-button" data-option-index="2">Sim!</button>
+                </div>
+            </div>
+
+            <!-- Question 2 (Slide 3) -->
+            <div class="quiz-slide question-slide" data-question-id="2">
+                <h2 class="slide-question">Eu chorava no banho e evitava tirar a roupa na frente do meu marido… Já sentiu vergonha de mostrar seu corpo assim como eu?</h2>
+                <div class="options-container">
+                    <button class="option-button" data-option-index="0">Todos os dias.</button>
+                    <button class="option-button" data-option-index="1">Me sinto assim há algum tempo e preciso de ajuda.</button>
+                </div>
+            </div>
+
+            <!-- Question 3 (Slide 4) -->
+            <div class="quiz-slide question-slide" data-question-id="3">
+                <h2 class="slide-question">Enquanto eu lutava pra emagrecer, via gente comendo de tudo e continuando magra e aquilo acabava comigo… Mas a culpa não era minha, era meu metabolismo bloqueado por um desequilíbrio hormonal. Sabia que o maior problema de não perder peso pode ser seu metabolismo lento?</h2>
+                <div class="options-container">
+                    <button class="option-button" data-option-index="0">Fiquei sabendo agora.</button>
+                    <button class="option-button" data-option-index="1">Já soube há um tempo atrás e estou procurando melhorar isso.</button>
+                </div>
+            </div>
+
+            <!-- Question 4 (Slide 5) -->
+            <div class="quiz-slide question-slide" data-question-id="4">
+                <h2 class="slide-question">Quando foi a última vez que se olhou no espelho e GOSTOU do que viu?</h2>
+                <div class="image-placeholder" style="width: 250px; height: 200px; background: #e9ecef; border: 2px dashed #6c757d; display: flex; align-items: center; justify-content: center; margin: 20px auto; border-radius: 8px;">
+                    <span style="color: #6c757d; font-size: 14px;">🪞 Imagem: Pessoa se olhando no espelho</span>
+                </div>
+                <div class="options-container">
+                    <button class="option-button" data-option-index="0">Nunca.</button>
+                    <button class="option-button" data-option-index="1">Mais de 1 ano atrás.</button>
+                    <button class="option-button" data-option-index="2">Algumas vezes nos últimos meses.</button>
+                </div>
+            </div>
+
+            <!-- Question 5 (Slide 6) -->
+            <div class="quiz-slide question-slide" data-question-id="5">
+                <h2 class="slide-question">Fazia dieta, jejum, evitava doces, caminhava… Mas a balança não se mexia e me sentia uma boba. Já sentiu como se estivesse fazendo tudo certo e mesmo assim não vendo resultado?</h2>
+                <div class="options-container">
+                    <button class="option-button" data-option-index="0">Sim, faz anos que me esforço e nada muda.</button>
+                    <button class="option-button" data-option-index="1">Sim, especialmente quando volto da academia e a balança não mexe.</button>
+                    <button class="option-button" data-option-index="2">Ainda não faço tudo certo, mas quero começar do jeito certo por aqui.</button>
+                </div>
+            </div>
+
+            <!-- Question 6 (Slide 7) -->
+            <div class="quiz-slide question-slide" data-question-id="6">
+                <h2 class="slide-question">Mas agora vem a parte mais importante… Apenas 12% das pessoas chegaram até aqui. E é justamente agora que eu vou revelar a parte que quase ninguém conhece... O detalhe que pode virar a chave do seu corpo e começar a mostrar resultados reais em até 30 dias! E se eu te dissesse que existe um jeito de "destravar" esse metabolismo sem dietas malucas ou horas de cardio em 30 dias?</h2>
+                <div class="options-container">
+                    <button class="option-button" data-option-index="0">Quero saber mais.</button>
+                    <button class="option-button" data-option-index="1">Esperei por isso por muito tempo.</button>
+                </div>
+            </div>
+
+            <!-- Question 7 (Slide 8) -->
+            <div class="quiz-slide question-slide" data-question-id="7">
+                <h2 class="slide-question">Eu segui tudo certo e saí de 231,4 libras para 145,5 em menos de 28 dias. Se você pudesse experimentar isso por alguns dias, sem risco, você toparia?</h2>
+                <div class="image-placeholder" style="width: 300px; height: 200px; background: #e9ecef; border: 2px dashed #6c757d; display: flex; align-items: center; justify-content: center; margin: 20px auto; border-radius: 8px;">
+                    <span style="color: #6c757d; font-size: 14px;">📊 Imagem: Antes e depois - transformação de peso</span>
+                </div>
+                <div class="options-container">
+                    <button class="option-button" data-option-index="0">Sim, claro.</button>
+                    <button class="option-button" data-option-index="1">Vamos logo com isso!</button>
+                </div>
+            </div>
+
+            <!-- Question 8 (Slide 9) -->
+            <div class="quiz-slide question-slide" data-question-id="8">
+                <h2 class="slide-question">E se eu te disse que esse método pode destravar seu metabolismo em menos de 28 dias e fazer seu corpo derreter gordura igual a sorvete no deserto?</h2>
+                <div class="options-container">
+                    <button class="option-button" data-option-index="0">É um sonho</button>
+                    <button class="option-button" data-option-index="1">Vamos logo com isso!</button>
+                    <button class="option-button" data-option-index="2">Quero isso agora mesmo.</button>
+                </div>
+            </div>
+
+            <!-- Question 9 (Slide 10) -->
+            <div class="quiz-slide question-slide" data-question-id="9">
+                <h2 class="slide-question">Tudo isso se deve ao Método de 28 Dias para Derreter Gordura, desenvolvido pelo renomado endocrinologista Dr. Rafael Monteiro, especialista em destravar o metabolismo. Esse método já funcionou com mais de 21.345 pessoas. Quer fazer parte das mais de 21.000 pessoas que atingiram resultados incríveis, ou prefere procrastinar mais um dia da sua vida enquanto seu corpo fica cada vez mais feio e seu marido com nojo de te tocar?</h2>
+                <div class="options-container">
+                    <button class="option-button" data-option-index="0">Vou dar um jeito na minha vida hoje mesmo.</button>
+                    <button class="option-button" data-option-index="1">Quero mudar de vida.</button>
+                    <button class="option-button" data-option-index="2">Sim, Absolutamente sim.</button>
+                </div>
+            </div>
+
+            <!-- Final Screen (Slide 11) -->
+            <div class="quiz-slide final-slide">
+                <h1 class="slide-title">🎉 PARABÉNS</h1>
+                <p class="slide-description">SEU PERFIL FOI SELECIONADO PARA ENTRAR PARA UM GRUPO SELETO DE PESSOAS QUE TERÃO ACESSO TOTAL AO APP EXCLUSIVO.</p>
+                <button class="cta-button">Acessar Agora</button>
+                <button class="restart-button">Refazer Quiz</button>
+            </div>
+        </div>
+
+        <!-- Reward animation template -->
+        <div class="reward-animation hidden">
+            <div class="confetti-container"></div>
+            <div class="reward-message animate__animated animate__bounceIn">
+                <h2>Congratulations!</h2>
+                <p>You're on the right track!</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/confetti.min.js"></script>
+    <script src="assets/js/quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,358 @@
+/* Base styles for the quiz */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8f9fa;
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+    scroll-behavior: smooth;
+}
+
+.quiz-container {
+    width: 100%;
+    max-width: 800px;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    scroll-behavior: smooth;
+}
+
+.quiz-header {
+    background: #f8f9fa;
+    padding: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.quiz-logo {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.quiz-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #007bff;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    width: 0%;
+}
+
+.quiz-slides-container {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px;
+    background: #f8f9fa;
+    position: relative;
+}
+
+.quiz-slide {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    padding-bottom: 80px; /* Space for swipe indicator */
+}
+
+.slide-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.slide-description {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.slide-question {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 30px;
+    line-height: 1.3;
+}
+
+.options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.option-button {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.option-button:hover {
+    background: #e9ecef;
+    color: #333;
+    border-color: #dee2e6;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.start-button, .cta-button, .restart-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 10px;
+}
+
+.start-button:hover, .cta-button:hover, .restart-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.restart-button {
+    background: #6c757d;
+}
+
+.restart-button:hover {
+    box-shadow: 0 10px 25px rgba(108, 117, 125, 0.3);
+}
+
+.reward-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+}
+
+.reward-animation.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.reward-message {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.reward-message h2 {
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 15px;
+}
+
+.reward-message p {
+    color: #666;
+    font-size: 18px;
+}
+
+.confetti-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Swipe indicator styles */
+.image-placeholder {
+    width: 300px;
+    height: 200px;
+    background: #e9ecef;
+    border: 2px dashed #6c757d;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto;
+    border-radius: 8px;
+    gap: 10px;
+}
+
+.placeholder-icon {
+    font-size: 32px;
+}
+
+.placeholder-text {
+    color: #6c757d;
+    font-size: 14px;
+    margin: 0;
+    text-align: center;
+}
+
+.swipe-indicator {
+    position: fixed;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 1000;
+    padding: 10px;
+}
+
+.chevrons-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: -2px;
+    margin-bottom: 5px;
+}
+
+.chevron {
+    font-size: 20px;
+    font-weight: normal;
+    animation: fadeGlow 2s infinite;
+    color: #007bff;
+    line-height: 0.8;
+}
+
+.chevron-1 {
+    animation-delay: 0s;
+}
+
+.chevron-2 {
+    animation-delay: 0.3s;
+}
+
+.chevron-3 {
+    animation-delay: 0.6s;
+}
+
+.swipe-text {
+    font-size: 12px;
+    color: #666;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+@keyframes fadeGlow {
+    0%, 100% {
+        opacity: 0.3;
+        color: #007bff;
+    }
+    50% {
+        opacity: 1;
+        color: #0056b3;
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .quiz-container {
+        margin: 20px;
+        border-radius: 15px;
+        min-height: 500px;
+    }
+    
+    .quiz-header {
+        padding: 15px;
+    }
+    
+    .quiz-logo {
+        font-size: 20px;
+    }
+    
+    .quiz-slides-container {
+        padding: 20px;
+    }
+    
+    .slide-title {
+        font-size: 24px;
+    }
+    
+    .slide-question {
+        font-size: 20px;
+    }
+    
+    .option-button {
+        padding: 15px;
+        font-size: 14px;
+    }
+    
+    .start-button, .cta-button, .restart-button {
+        padding: 12px 30px;
+        font-size: 16px;
+    }
+    
+    .reward-message {
+        margin: 20px;
+        padding: 30px;
+    }
+    
+    .reward-message h2 {
+        font-size: 24px;
+    }
+    
+    .reward-message p {
+        font-size: 16px;
+    }
+    
+    .swipe-indicator {
+        bottom: 20px;
+    }
+    
+    .chevron {
+        font-size: 20px;
+    }
+    
+    .swipe-text {
+        font-size: 10px;
+    }
+}

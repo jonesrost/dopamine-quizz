@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fundo do "Antes" -->
+  <rect x="10" y="10" width="130" height="180" rx="10" fill="#f0f0f0"/>
+  
+  <!-- Silhueta "Antes" -->
+  <ellipse cx="75" cy="60" rx="30" ry="30" fill="#aaaaaa"/>
+  <path d="M75 90 Q 45 120 45 170 L 105 170 Q 105 120 75 90" fill="#aaaaaa"/>
+  <text x="75" y="190" font-family="Arial" font-size="14" text-anchor="middle" fill="#333333">Antes</text>
+  
+  <!-- Fundo do "Depois" -->
+  <rect x="160" y="10" width="130" height="180" rx="10" fill="#f0f0f0"/>
+  
+  <!-- Silhueta "Depois" -->
+  <ellipse cx="225" cy="60" rx="25" ry="25" fill="#ff6b6b"/>
+  <path d="M225 85 Q 205 120 205 170 L 245 170 Q 245 120 225 85" fill="#ff6b6b"/>
+  <text x="225" y="190" font-family="Arial" font-size="14" text-anchor="middle" fill="#333333">Depois</text>
+  
+  <!-- Seta de transformação -->
+  <path d="M145 100 L 155 100 L 155 90 L 165 100 L 155 110 L 155 100" fill="#4CAF50"/>
+</svg>
