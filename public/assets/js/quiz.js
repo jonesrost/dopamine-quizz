@@ -217,6 +217,21 @@ function setupEventListeners() {
             }
         }, true);
     });
+
+    // Suporte a toque para estado ativo em mobile
+    document.addEventListener('touchstart', function(e) {
+        const btn = e.target.closest('button');
+        if (btn && (btn.classList.contains('option-button') || btn.classList.contains('cta-button') || btn.classList.contains('continue-button') || btn.classList.contains('start-button') || btn.classList.contains('restart-button'))) {
+            btn.classList.add('active');
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchend', function(e) {
+        const btn = e.target.closest('button');
+        if (btn && (btn.classList.contains('option-button') || btn.classList.contains('cta-button') || btn.classList.contains('continue-button') || btn.classList.contains('start-button') || btn.classList.contains('restart-button'))) {
+            btn.classList.remove('active');
+        }
+    }, { passive: true });
 }
 
 // Setup leave/refresh protection to show custom modal

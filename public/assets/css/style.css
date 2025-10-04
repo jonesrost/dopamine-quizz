@@ -443,6 +443,20 @@ body {
 .restart-button.active,
 .continue-button.active {
   transform: scale(0.98);
-  filter: brightness(0.95);
-  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+/* Active color behavior: white buttons turn blue, blue buttons deepen */
+.option-button.active {
+  background: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+.start-button.active,
+.cta-button.active,
+.continue-button.active {
+  background: #0b5ed7; /* deeper blue for active */
+}
+.restart-button.active {
+  background: #5c636a; /* deeper gray for active */
 }
