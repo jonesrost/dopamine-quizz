@@ -255,6 +255,12 @@ body {
     padding: 10px 12px;
 }
 
+/* Full-flow slides: no internal scroll or shortening */
+.quiz-slide[data-full-flow="true"] .slide-scroll-content {
+    max-height: none;
+    overflow: visible;
+}
+
 .swipe-indicator.disabled { opacity: 0.5; filter: grayscale(40%); }
 .swipe-indicator.enabled { opacity: 1; }
 .swipe-indicator.hidden { display: none; }
@@ -310,7 +316,7 @@ body {
 /* Responsive design */
 @media (max-width: 768px) {
     .quiz-container {
-        margin: 20px;
+        margin: 12px;
         border-radius: 15px;
         min-height: 500px;
     }
@@ -324,25 +330,31 @@ body {
     }
     
     .quiz-slides-container {
-        padding: 20px;
+        padding: 12px;
     }
     
     .slide-title {
-        font-size: 24px;
+        font-size: 22px;
     }
     
     .slide-question {
-        font-size: 20px;
+        font-size: 18px;
+    }
+
+    .slide-description {
+        font-size: 16px;
     }
     
     .option-button {
-        padding: 15px;
+        padding: 18px;
         font-size: 14px;
+        border-radius: 16px;
     }
     
     .start-button, .cta-button, .restart-button {
-        padding: 12px 30px;
-        font-size: 16px;
+        padding: 14px 36px;
+        font-size: 17px;
+        border-radius: 9999px;
     }
     
     .reward-message {
@@ -359,7 +371,7 @@ body {
     }
     
     .swipe-indicator { bottom: 0; }
-    .slide-scroll-content { max-height: calc(100vh - 220px); }
+    .slide-scroll-content { max-height: calc(100vh - 220px); padding: 0 4px 10px; }
 
     .chevron { font-size: 22px; }
     

@@ -5,7 +5,7 @@
 
 // Quiz configuration
 const quizConfig = {
-    totalSlides: 12, // Welcome + Congratulations + 9 questions + Final
+    totalSlides: 12, // será atualizado dinamicamente com base no DOM
     welcomeScreenDuration: 1000
 };
 
@@ -112,6 +112,11 @@ const quizAnalytics = {
 // Initialize quiz when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     setupQuiz();
+    // Atualiza dinamicamente o total de slides com base no DOM
+    const allSlides = document.querySelectorAll('.quiz-slide');
+    if (allSlides && allSlides.length) {
+        quizConfig.totalSlides = allSlides.length;
+    }
     
     // Check for saved progress
     if (quizStorage.hasSavedProgress()) {
@@ -177,6 +182,14 @@ function setupEventListeners() {
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('option-button')) {
             handleOptionClick(e.target);
+        }
+        
+        // Continue button on Story (Slide 1)
+        if (e.target.classList.contains('continue-button')) {
+            currentSlide++;
+            if (currentSlide < quizConfig.totalSlides) {
+                showSlide(currentSlide);
+            }
         }
         
         // CTA button
@@ -293,18 +306,22 @@ function showSlide(slideIndex) {
         slides[slideIndex].style.display = 'flex';
         const slideElement = slides[slideIndex];
         
-        // Show/hide progress bar based on slide index
+        // Show/hide progress bar based on whether the slide is a question
         const progressBar = document.querySelector('.quiz-progress-bar');
         if (progressBar) {
-            // Hide progress bar on congratulations screen (slide 1)
-            if (slideIndex === 1) {
+            const isQuestionSlide = slideElement.hasAttribute('data-question-id');
+            if (!isQuestionSlide) {
+                // Hide on non-question slides (welcome, congratulations, sales page, etc.)
                 progressBar.style.display = 'none';
-            } else if (slideIndex >= 2) {
-                // Show progress bar starting from slide 2 (first question)
+            } else {
+                // Show progress bar on question slides
                 progressBar.style.display = 'block';
-                // Adjust progress calculation to start from slide 2
-                const adjustedProgress = ((slideIndex - 2) / (quizConfig.totalSlides - 3)) * 100;
-                updateProgressBar(Math.max(0, adjustedProgress));
+                const slidesArr = Array.from(document.querySelectorAll('.quiz-slide'));
+                const firstQuestionIndex = slidesArr.findIndex(s => s.hasAttribute('data-question-id'));
+                const totalQuestions = document.querySelectorAll('.quiz-slide[data-question-id]').length;
+                const answeredCount = Math.max(0, slideIndex - firstQuestionIndex);
+                const progress = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+                updateProgressBar(progress);
             }
         }
 
@@ -386,8 +403,19 @@ function showFinalMessage() {
 
 // Handle final CTA button click
 function handleFinalCta() {
-    // For now, just show an alert - this would be replaced with actual results page
-    alert('Your personalized results would be displayed here!');
+    // Navega para a página de vendas (slide com classe .sales-slide)
+    const slides = Array.from(document.querySelectorAll('.quiz-slide'));
+    const salesSlide = document.querySelector('.sales-slide');
+    if (salesSlide) {
+        const targetIndex = slides.indexOf(salesSlide);
+        if (targetIndex !== -1) {
+            currentSlide = targetIndex;
+            showSlide(currentSlide);
+            return;
+        }
+    }
+    // Fallback caso não encontre o slide de vendas
+    alert('Sales page not found. Please check the HTML structure.');
 }
 
 // Update progress bar
@@ -400,48 +428,27 @@ function updateProgressBar(progress = 0) {
 
 // Setup scroll gate for slides that require reading before swiping
 function setupScrollGateForSlide(slideElement, slideIndex) {
-    const requiresRead = slideElement && slideElement.dataset && slideElement.dataset.requiresRead === 'true';
     const indicator = slideElement.querySelector('.swipe-indicator');
     const contentEl = slideElement.querySelector('.slide-scroll-content');
-    
-    // Default: enable swipe except for intro/story slides with requiresRead
-    if (requiresRead && (slideIndex === 0 || slideIndex === 1)) {
-        // If content is scrollable, disable swipe until bottom reached
-        const isScrollable = contentEl && contentEl.scrollHeight > contentEl.clientHeight + 2;
-        if (isScrollable) {
-            setSwipeEnabled(false, indicator, contentEl);
-            // Attach listener to enable swipe when scrolled to bottom
-            const onScroll = () => {
-                if (isScrolledToBottom(contentEl)) {
-                    setSwipeEnabled(true, indicator, contentEl);
-                }
-            };
-            contentEl.addEventListener('scroll', onScroll, { passive: true });
-        } else {
-            // Not scrollable: allow immediate swipe
-            setSwipeEnabled(true, indicator, contentEl);
-        }
-    } else {
-        setSwipeEnabled(true, indicator, contentEl);
-    }
+    // Desabilita swipe quando marcado com data-no-swipe
+    const noSwipe = slideElement.hasAttribute('data-no-swipe');
+    setSwipeEnabled(!noSwipe, indicator, contentEl);
 }
 
 function setSwipeEnabled(enabled, indicator, contentEl) {
     swipeEnabled = enabled;
     if (indicator) {
-        indicator.classList.toggle('enabled', enabled);
-        indicator.classList.toggle('disabled', !enabled);
-        indicator.classList.toggle('hidden', !enabled);
         const textEl = indicator.querySelector('.swipe-text');
-        if (textEl) {
-            textEl.textContent = enabled ? 'deslize para continuar' : 'role para ler e depois deslize';
+        if (enabled) {
+            indicator.classList.add('enabled');
+            indicator.classList.remove('disabled');
+            indicator.classList.remove('hidden');
+            if (textEl) { textEl.textContent = 'swipe'; }
+        } else {
+            indicator.classList.remove('enabled');
+            indicator.classList.add('disabled');
+            indicator.classList.add('hidden');
+            if (textEl) { textEl.textContent = ''; }
         }
     }
-
-    // Não reservar espaço no conteúdo: indicador fica sobreposto sem criar faixa
-}
-
-function isScrolledToBottom(el) {
-    if (!el) return true;
-    return (el.scrollTop + el.clientHeight) >= (el.scrollHeight - 6);
 }
