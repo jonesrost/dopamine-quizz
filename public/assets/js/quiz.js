@@ -13,6 +13,26 @@ const quizConfig = {
 let currentSlide = 0;
 let slideStartTime = 0;
 let swipeEnabled = true; // Gate for swipe navigation on intro/story slides
+let clickAudioCtx = null; // Reused AudioContext for click/selection sound
+
+// Safe helper: get closest element from event target, even when target isn't an Element
+function getClosestFromEvent(e, selector) {
+    const t = e && e.target ? e.target : null;
+    if (t && typeof t.closest === 'function') {
+        return t.closest(selector);
+    }
+    const path = (typeof e.composedPath === 'function') ? e.composedPath() : (e.path || []);
+    for (const el of path) {
+        if (el && el instanceof Element) {
+            if (el.matches && el.matches(selector)) return el;
+            if (typeof el.closest === 'function') {
+                const found = el.closest(selector);
+                if (found) return found;
+            }
+        }
+    }
+    return null;
+}
 
 // Local Storage Manager for saving quiz progress
 const quizStorage = {
@@ -170,31 +190,35 @@ function setupEventListeners() {
     
     // Option buttons
     document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('option-button')) {
-            handleOptionClick(e.target);
+        const optionBtn = getClosestFromEvent(e, '.option-button');
+        if (optionBtn) {
+            handleOptionClick(optionBtn);
         }
-        
+
         // Continue button on Story (Slide 1)
-        if (e.target.classList.contains('continue-button')) {
+        const continueBtn = getClosestFromEvent(e, '.continue-button');
+        if (continueBtn) {
             currentSlide++;
             if (currentSlide < quizConfig.totalSlides) {
                 showSlide(currentSlide);
             }
         }
-        
+
         // CTA button
-        if (e.target.classList.contains('cta-button')) {
+        const ctaBtn = getClosestFromEvent(e, '.cta-button');
+        if (ctaBtn) {
             handleFinalCta();
         }
-        
+
         // Restart button
-        if (e.target.classList.contains('restart-button')) {
+        const restartBtn = getClosestFromEvent(e, '.restart-button');
+        if (restartBtn) {
             quizStorage.clearProgress();
             startNewQuiz();
         }
 
         // Efeitos visuais e sonoros em cliques de botões
-        const clickable = e.target.closest('button');
+        const clickable = getClosestFromEvent(e, 'button');
         if (clickable && (clickable.classList.contains('option-button') || clickable.classList.contains('cta-button') || clickable.classList.contains('continue-button') || clickable.classList.contains('start-button') || clickable.classList.contains('restart-button'))) {
             spawnSparklesAt(e.clientX || (window.innerWidth/2), e.clientY || (window.innerHeight/2));
             playClickSound();
@@ -203,7 +227,7 @@ function setupEventListeners() {
 
     // Estado ativo nos botões durante o clique
     document.addEventListener('mousedown', function(e) {
-        const btn = e.target.closest('button');
+        const btn = getClosestFromEvent(e, 'button');
         if (btn && (btn.classList.contains('option-button') || btn.classList.contains('cta-button') || btn.classList.contains('continue-button') || btn.classList.contains('start-button') || btn.classList.contains('restart-button'))) {
             btn.classList.add('active');
         }
@@ -211,7 +235,7 @@ function setupEventListeners() {
 
     ['mouseup', 'mouseleave', 'blur'].forEach(evt => {
         document.addEventListener(evt, function(e) {
-            const btn = e.target.closest('button');
+            const btn = getClosestFromEvent(e, 'button');
             if (btn && (btn.classList.contains('option-button') || btn.classList.contains('cta-button') || btn.classList.contains('continue-button') || btn.classList.contains('start-button') || btn.classList.contains('restart-button'))) {
                 btn.classList.remove('active');
             }
@@ -220,14 +244,14 @@ function setupEventListeners() {
 
     // Suporte a toque para estado ativo em mobile
     document.addEventListener('touchstart', function(e) {
-        const btn = e.target.closest('button');
+        const btn = getClosestFromEvent(e, 'button');
         if (btn && (btn.classList.contains('option-button') || btn.classList.contains('cta-button') || btn.classList.contains('continue-button') || btn.classList.contains('start-button') || btn.classList.contains('restart-button'))) {
             btn.classList.add('active');
         }
     }, { passive: true });
 
     document.addEventListener('touchend', function(e) {
-        const btn = e.target.closest('button');
+        const btn = getClosestFromEvent(e, 'button');
         if (btn && (btn.classList.contains('option-button') || btn.classList.contains('cta-button') || btn.classList.contains('continue-button') || btn.classList.contains('start-button') || btn.classList.contains('restart-button'))) {
             btn.classList.remove('active');
         }
@@ -265,7 +289,7 @@ function setupLeaveProtection() {
 
     // Intercept clicks on external links
     document.addEventListener('click', function(e) {
-        const anchor = e.target.closest('a');
+        const anchor = getClosestFromEvent(e, 'a');
         if (anchor && anchor.href && !anchor.href.includes('index.html') && !anchor.href.startsWith('#')) {
             if (currentSlide >= 2) {
                 e.preventDefault();
@@ -512,9 +536,11 @@ function showConfetti() {
 function spawnSparklesAt(x, y) {
     if (typeof confetti !== 'undefined') {
         confetti({
-            particleCount: 20,
-            spread: 30,
-            startVelocity: 30,
+            particleCount: 30,
+            spread: 45,
+            startVelocity: 35,
+            ticks: 60,
+            scalar: 0.9,
             origin: { x: x / window.innerWidth, y: y / window.innerHeight }
         });
     }
@@ -524,17 +550,33 @@ function spawnSparklesAt(x, y) {
 function playClickSound() {
     try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        const ctx = new AudioCtx();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.value = 600;
-        gain.gain.setValueAtTime(0.02, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.2);
+        clickAudioCtx = clickAudioCtx || new AudioCtx();
+        const ctx = clickAudioCtx;
+        const now = ctx.currentTime;
+
+        // Primeiro tom: ataque rápido e decaimento curto
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(520, now);
+        gain1.gain.setValueAtTime(0.0001, now);
+        gain1.gain.exponentialRampToValueAtTime(0.18, now + 0.03);
+        gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+        osc1.connect(gain1).connect(ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.24);
+
+        // Segundo tom: leve cintilância para sensação de "chime"
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(780, now + 0.05);
+        gain2.gain.setValueAtTime(0.0001, now);
+        gain2.gain.exponentialRampToValueAtTime(0.12, now + 0.08);
+        gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+        osc2.connect(gain2).connect(ctx.destination);
+        osc2.start(now + 0.05);
+        osc2.stop(now + 0.3);
     } catch (e) {
         // Se o contexto não puder iniciar, silenciosamente ignora
         console.warn('Audio click not available:', e);
@@ -547,6 +589,16 @@ function showFinalMessage() {
     const finalSlide = document.querySelector('.final-slide');
     if (finalSlide) {
         finalSlide.style.display = 'flex';
+    }
+
+    // Hide progress bar on congratulations/final step and reset fill
+    const progressBar = document.querySelector('.quiz-progress-bar');
+    if (progressBar) {
+        progressBar.style.display = 'none';
+    }
+    const progressFill = document.querySelector('.progress-fill');
+    if (progressFill) {
+        progressFill.style.width = '0%';
     }
     
     // Track quiz completion
